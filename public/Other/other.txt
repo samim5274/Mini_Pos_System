@@ -1,0 +1,37 @@
+$data = Order::where('reg', $reg)->first();
+        if($data){
+            return response()->json([
+                'error' => 'This order already placed. Try another one. Thank You..!'
+            ], 404);
+        }
+
+        
+        // Get cart items by reg & user
+        $cartItems = Cart::where('reg', $reg)->where('user_id', $userId)->get();
+
+        if ($cartItems->isEmpty()) {
+            return response()->json([
+                'error' => 'No cart data found for this reg'
+            ], 404);
+        }
+
+        // Calculate total
+        $total = 0;
+        foreach ($cartItems as $item) {
+            $total += $item->quantity * $item->product->price;
+        }
+
+        // Create Order
+        $order = Order::create([
+            'reg'       => $reg,
+            'date'      => now()->toDateString(),
+            'user_id'   => $userId,
+            'tenant_id' => $cartItems->first()->tenant_id,
+            'status'    => 'Pending',
+            'total'     => $total
+        ]);
+
+        return response()->json([
+            'message' => 'Order created successfully',
+            'order'   => $order
+        ], 201);
