@@ -1,0 +1,627 @@
+{
+	"info": {
+		"_postman_id": "50ea1feb-d59a-4b2e-aba6-72736fb712f9",
+		"name": "Mini-Pos-System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49516630",
+		"_collection_link": "https://cse-shamim-cub-9504914.postman.co/workspace/a914f758-4f41-424d-88c1-dd9a3304e507/collection/49516630-50ea1feb-d59a-4b2e-aba6-72736fb712f9?action=share&source=collection_link&creator=49516630"
+	},
+	"item": [
+		{
+			"name": "http://127.0.0.1:8080/api/register",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Samim\",\n    \"email\": \"staff@example.com\",\n    \"password\": \"password\",\n    \"password_confirmation\": \"password\",\n    \"role\": \"staff\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/login",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"staff@example.com\",\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/user",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7|ph941hLNKjHrZlfjKXEpNzp3bORbEr1BoR9A8vY7ed861cc2",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/user",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/products/1",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7|ph941hLNKjHrZlfjKXEpNzp3bORbEr1BoR9A8vY7ed861cc2",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/products/54",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"products",
+						"54"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/products-update",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7|ph941hLNKjHrZlfjKXEpNzp3bORbEr1BoR9A8vY7ed861cc2",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Laptop Dell XPS 15\",\n    \"sku\": \"XPS15-001\",\n    \"price\": 1500.75,\n    \"stock_quantity\": 8,\n    \"low_stock_threshold\": 3\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/tenants/1/products/54",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"tenants",
+						"1",
+						"products",
+						"54"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/products-delete",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7|ph941hLNKjHrZlfjKXEpNzp3bORbEr1BoR9A8vY7ed861cc2",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Laptop Dell XPS 15\",\n    \"sku\": \"XPS15-001\",\n    \"price\": 1500.75,\n    \"stock_quantity\": 8,\n    \"low_stock_threshold\": 3\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/products-delete/53",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"products-delete",
+						"53"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/add-cart",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7|ph941hLNKjHrZlfjKXEpNzp3bORbEr1BoR9A8vY7ed861cc2",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-Tenant-ID",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"quantity\": 10\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/add-cart/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"add-cart",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/view-cart",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7|ph941hLNKjHrZlfjKXEpNzp3bORbEr1BoR9A8vY7ed861cc2",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"quantity\": 1\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/cart-view/2026011251",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"cart-view",
+						"2026011251"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/remove-to-cart",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7|ph941hLNKjHrZlfjKXEpNzp3bORbEr1BoR9A8vY7ed861cc2",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"quantity\": 1\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/remove-to-cart/2026011251/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"remove-to-cart",
+						"2026011251",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/confirm-order",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7|ph941hLNKjHrZlfjKXEpNzp3bORbEr1BoR9A8vY7ed861cc2",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-Tenant-ID",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"reg\" : 2026011554\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/confirm-order",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"confirm-order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/cancel-order",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7|ph941hLNKjHrZlfjKXEpNzp3bORbEr1BoR9A8vY7ed861cc2",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-Tenant-ID",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"reg\" : 2026011552\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/cancel-order",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"cancel-order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/payment",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7|ph941hLNKjHrZlfjKXEpNzp3bORbEr1BoR9A8vY7ed861cc2",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-Tenant-ID",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"reg\": \"2026011554\",\n  \"name\": \"Samim Hossain\",\n  \"phone\": \"017XXXXXXXX\",\n  \"address\": \"Dhaka\",\n  \"discount\": 100,\n  \"pay\": 3000\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/payment",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"payment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/daily-sale-summary",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7|ph941hLNKjHrZlfjKXEpNzp3bORbEr1BoR9A8vY7ed861cc2",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-Tenant-ID",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"reg\": \"2026011552\",\n  \"name\": \"Samim Hossain\",\n  \"phone\": \"017XXXXXXXX\",\n  \"address\": \"Dhaka\",\n  \"discount\": 100,\n  \"pay\": 3000\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/daily-sale-summary",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"daily-sale-summary"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/top-5-sale",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7|ph941hLNKjHrZlfjKXEpNzp3bORbEr1BoR9A8vY7ed861cc2",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-Tenant-ID",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"reg\": \"2026011552\",\n  \"name\": \"Samim Hossain\",\n  \"phone\": \"017XXXXXXXX\",\n  \"address\": \"Dhaka\",\n  \"discount\": 100,\n  \"pay\": 3000\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/top-5-sale",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"top-5-sale"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/low-stock-report",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7|ph941hLNKjHrZlfjKXEpNzp3bORbEr1BoR9A8vY7ed861cc2",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-Tenant-ID",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"reg\": \"2026011552\",\n  \"name\": \"Samim Hossain\",\n  \"phone\": \"017XXXXXXXX\",\n  \"address\": \"Dhaka\",\n  \"discount\": 100,\n  \"pay\": 3000\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/low-stock-repot",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"low-stock-repot"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
