@@ -25,6 +25,7 @@ class PaymentController extends Controller
             'discount' => 'nullable|numeric|min:0',
             'pay'      => 'required|numeric|min:0',
         ]);
+
         $reg    = $request->reg;
         
         $order = Order::where('reg', $reg)->where('user_id', Auth::id())->first();
@@ -32,8 +33,8 @@ class PaymentController extends Controller
             return response()->json([
                 'error' => 'Order not found',
                 'data' => $order
-                ], 404);
-                }
+            ], 404);
+        }
                 
         $order->status = "Paid";
         $order->update();

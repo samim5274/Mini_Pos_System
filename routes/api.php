@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Product\ProductController;
 use App\Http\Controllers\Api\Order\CartController;
 use App\Http\Controllers\Api\Order\OrderController;
 use App\Http\Controllers\Api\Payment\PaymentController;
+use App\Http\Controllers\Api\Report\ReportController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -30,6 +31,10 @@ Route::middleware('auth:sanctum', 'tenant')->group(function () {
     Route::post('/cancel-order', [OrderController::class, 'cancelOrder']);
 
     Route::post('/payment', [PaymentController::class, 'payment']);
+
+    Route::post('/daily-sale-summary', [ReportController::class, 'dailySaleSummary']);
+    Route::post('/top-5-sale', [ReportController::class, 'topSellingProducts']);
+    Route::post('/low-stock-repot', [ReportController::class, 'lowStock']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
