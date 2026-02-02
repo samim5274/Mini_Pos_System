@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Product;
 use App\Models\Cart;
@@ -23,68 +24,78 @@ class CartController extends Controller
             'quantity' => 'required|integer|min:1'
         ]);
 
-        // Product fetch
-        $product = Product::findOrFail($id);
+        return DB::transaction(function () use ($request, $id, $user) {
 
-        // Stock check
-        if ($request->quantity > $product->stock_quantity) {
-            return response()->json([
-                'error' => 'Not enough stock available'
-            ], 400);
-        }
+            // Product fetch
+            $product = Product::lockForUpdate()->findOrFail($id);
 
-        // Generate reg (same day + same user)
-        $userId = $user->id;
-        $count = Order::whereDate('date', now())
-            ->where('user_id', $userId)
-            ->count() + 1;
-
-        $reg = now()->format('Ymd') . $userId . $count;
-
-        // Check existing cart
-        $cart = Cart::where('user_id', $userId)
-            ->where('product_id', $product->id)
-            ->where('reg', $reg)
-            ->first();
-
-        if ($cart) {
-            $newQty = $cart->quantity + $request->quantity;
-
-            if ($newQty > $product->stock_quantity) {
+            // Stock check
+            if ($request->quantity > $product->stock_quantity) {
                 return response()->json([
-                    'error' => 'Stock limit exceeded'
+                    'error' => 'Not enough stock available'
                 ], 400);
             }
 
-            
-            $cart->update([
-                'quantity'  => $newQty,
-                'price'     => $product->price * $newQty,
+            // Generate reg (same day + same user)
+            $userId = $user->id;
+            $todayPrefix = now()->format('Ymd') . $userId;            
+
+            $reg = Cart::where('user_id', $userId)
+                ->where('reg', 'like', $todayPrefix.'%')
+                ->latest('id')
+                ->value('reg') ?? ($todayPrefix.'001');
+
+            // Check existing cart
+            $cart = Cart::where('user_id', $userId)
+                ->where('product_id', $product->id)
+                ->where('reg', $reg)
+                ->lockForUpdate()
+                ->first();
+
+            if ($cart) {
+                $newQty = $cart->quantity + $request->quantity;
+
+                if ($request->quantity > $product->stock_quantity) {
+                    return response()->json([
+                        'error' => 'Stock limit exceeded'
+                    ], 400);
+                }
+
+                
+                $cart->update([
+                    'quantity'  => $newQty,
+                    'price'     => $product->price * $newQty,
+                ]);
+
+                $product->stock_quantity -= $request->quantity;
+                $product->update();
+
+                return response()->json([
+                    'message' => 'Cart quantity updated successfully',
+                    'data' => $cart
+                ], 200);
+            }
+
+            // Create cart
+            $cart = Cart::create([
+                'reg'        => $reg,
+                'product_id' => $product->id,
+                'tenant_id'  => $product->tenant_id,
+                'user_id'    => $userId,
+                'price'      => $product->price,
+                'quantity'   => $request->quantity
             ]);
 
-            $product->stock_quantity -= $request->quantity;
-            $product->update();
+            // decrement stock safely
+            $product->decrement('stock_quantity', $request->quantity);
 
             return response()->json([
-                'message' => 'Cart quantity updated successfully',
-                'data' => $cart
+                'message' => 'Product add to cart successfully',
+                'data' => $cart,
+                'product' => $product->fresh(),
             ], 200);
-        }
 
-        // Create cart
-        $cart = Cart::create([
-            'reg'        => $reg,
-            'product_id' => $product->id,
-            'tenant_id'  => $product->tenant_id,
-            'user_id'    => $userId,
-            'price'      => $product->price,
-            'quantity'   => $request->quantity
-        ]);
-
-        return response()->json([
-            'message' => 'Product added to cart successfully',
-            'data' => $cart
-        ], 201);
+        });
     }
 
     public function cartView($reg = null){
