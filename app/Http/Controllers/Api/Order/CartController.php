@@ -64,7 +64,8 @@ class CartController extends Controller
                 
                 $cart->update([
                     'quantity'  => $newQty,
-                    'price'     => $product->price * $newQty,
+                    // 'price'     => $product->price * $newQty, // যদি price=total হয়
+                    'price'     => $product->price, // যদি price=unit হয়
                 ]);
 
                 $product->stock_quantity -= $request->quantity;
@@ -98,15 +99,37 @@ class CartController extends Controller
         });
     }
 
+    public function cartCount()
+    {
+        $userId = Auth::id();
+
+        $todayPrefix = now()->format('Ymd') . $userId;
+
+        $reg = Cart::where('user_id', $userId)
+            ->where('reg', 'like', $todayPrefix.'%')
+            ->latest('id')
+            ->value('reg');
+
+        $count = 0;
+        if ($reg) {
+            $count = Cart::where('user_id', $userId)
+                ->where('reg', $reg)
+                ->count();
+        }
+
+        return response()->json(['count' => $count]);
+    }
+
+
     public function cartView($reg = null){
         if($reg == NULL){
-            $cart = Cart::all();
+            $cart = Cart::with(['product','tenant','user'])->get();
             return response()->json([
                 'message' => 'Get All Cart Products.',
                 'data' => $cart
             ], 200);
         } else {
-            $cart = Cart::where('reg', $reg)->get();
+            $cart = Cart::with(['product','tenant','user'])->where('reg', $reg)->get();
             return response()->json([
                 'message' => 'Get All Cart Products.',
                 'data' => $cart
@@ -118,26 +141,30 @@ class CartController extends Controller
         // Logged-in user
         $user = Auth::user();
 
-        $cart = Cart::where('user_id', $user->id)->where('product_id', $id)->where('reg', $reg)->first();
+        return DB::transaction(function () use ($user, $reg, $id) {
 
-        if (!$cart) {
-            return response()->json([
-                'error' => 'Cart item not found'
-            ], 404);
-        } else {
-            // Product fetch
-            $product = Product::findOrFail($id);
+            $cart = Cart::where('user_id', $user->id)->where('product_id', $id)->where('reg', $reg)->lockForUpdate()->first();
 
-            // Restore stock
-            $product->increment('stock_quantity', $cart->quantity);
+            if (!$cart) {
+                return response()->json([
+                    'error' => 'Cart item not found'
+                ], 404);
+            } else {
+                // Product fetch
+                $product = Product::where('id', $id)->lockForUpdate()->first();
 
-            // Delete cart item
-            $cart->delete();
+                // Restore stock
+                $product->increment('stock_quantity', $cart->quantity);
 
-            return response()->json([
-                'message' => 'Product remvoe from cart successfully',
-                'data' => $cart
-            ], 200);
-        }
+                // Delete cart item
+                $cart->delete();
+
+                return response()->json([
+                    'message' => 'Product remvoe from cart successfully',
+                    'data' => $cart
+                ], 200);
+            }
+
+        });
     }
 }
