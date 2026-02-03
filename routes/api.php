@@ -35,8 +35,9 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function () {
 
         Route::post('/add-cart/{id}', [CartController::class, 'addCart']);
         Route::get('/cart-count', [CartController::class, 'cartCount']);
-        Route::post('/cart-view/{reg?}', [CartController::class, 'cartView']);
+        Route::post('/cart-view', [CartController::class, 'cartView']);
         Route::post('/remove-to-cart/{reg}/{id}', [CartController::class, 'cartRemove']);
+        Route::post('/cart-qty-update/{reg}/{productId}', [CartController::class, 'updateQty']);
 
         Route::post('/confirm-order', [OrderController::class, 'confirmOrder']);
         Route::post('/cancel-order', [OrderController::class, 'cancelOrder']);

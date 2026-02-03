@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 use App\Models\Cart;
 use App\Models\Order;
+use App\Services\RegGenerator;
 
 class CartController extends Controller
 {
@@ -38,13 +39,8 @@ class CartController extends Controller
 
             // Generate reg (same day + same user)
             $userId = $user->id;
-            $todayPrefix = now()->format('Ymd') . $userId;            
-
-            $reg = Cart::where('user_id', $userId)
-                ->where('reg', 'like', $todayPrefix.'%')
-                ->latest('id')
-                ->value('reg') ?? ($todayPrefix.'001');
-
+            $reg = RegGenerator::generateOrderReg($userId);
+            
             // Check existing cart
             $cart = Cart::where('user_id', $userId)
                 ->where('product_id', $product->id)
@@ -120,21 +116,29 @@ class CartController extends Controller
         return response()->json(['count' => $count]);
     }
 
-
-    public function cartView($reg = null){
-        if($reg == NULL){
-            $cart = Cart::with(['product','tenant','user'])->get();
+    public function cartView(Request $request){
+        
+        $userId = Auth::id();
+        if (!$userId) {
             return response()->json([
-                'message' => 'Get All Cart Products.',
-                'data' => $cart
-            ], 200);
-        } else {
-            $cart = Cart::with(['product','tenant','user'])->where('reg', $reg)->get();
-            return response()->json([
-                'message' => 'Get All Cart Products.',
-                'data' => $cart
-            ], 200);
+                'message' => 'Unauthorized user',
+                'reg'     => null,
+                'data'    => [],
+            ], 401);
         }
+        
+        $reg = RegGenerator::generateOrderReg($userId);
+        
+        $items = Cart::with(['product','tenant','user'])
+            ->where('user_id', $userId)
+            ->where('reg', $reg)
+            ->get();
+
+        return response()->json([
+            'message' => 'Cart items',
+            'reg' => $reg,     
+            'data' => $items
+        ], 200);
     }
 
     public function cartRemove($reg, $id){
@@ -165,6 +169,62 @@ class CartController extends Controller
                 ], 200);
             }
 
+        });
+    }
+
+    public function updateQty(Request $request, $reg, $productId){
+        $data = $request->validate([
+            'quantity' => ['required','integer','min:1'],
+        ]);
+
+        return DB::transaction(function () use ($data, $reg, $productId) {
+
+            // 1) cart row lock
+            $cart = Cart::where('reg', $reg)->lockForUpdate()->where('product_id', $productId)->firstOrFail();
+
+            $oldQty = (int) $cart->quantity;
+            $newQty = (int) $data['quantity'];
+
+            if ($newQty === $oldQty) {
+                return response()->json([
+                    'message' => 'No change',
+                    'quantity' => $cart->quantity,
+                ]);
+            }
+
+            $diff = $newQty - $oldQty;
+            // diff > 0 => customer more qty => stock কমবে
+            // diff < 0 => customer less qty => stock বাড়বে
+
+            // 2) product row lock
+            $product = Product::lockForUpdate()->where('id', $productId)->firstOrFail();
+            
+            // 3) stock check + update
+            if ($diff > 0) {
+                // extra qty নিতে হলে stock যথেষ্ট থাকতে হবে
+                if ($product->stock_quantity < $diff) {
+                    return response()->json([
+                        'message' => 'Out of Stock.',
+                        'available_stock' => $product->stock_quantity,
+                    ], 422);
+                }
+                $product->stock_quantity = $product->stock_quantity - $diff;
+            } else {
+                // qty কমালে stock ফেরত যাবে
+                $product->stock_quantity = $product->stock_quantity + abs($diff);
+            }
+
+            // 4) save both
+            $cart->quantity = $newQty;
+
+            $product->save();
+            $cart->save();
+
+            return response()->json([
+                'message' => 'Quantity updated',
+                'quantity' => $cart->quantity,
+                'stock_quantity' => $product->stock_quantity,
+            ]);
         });
     }
 }

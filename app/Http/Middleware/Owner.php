@@ -18,7 +18,7 @@ class Owner
         if (!auth()->check() || auth()->user()->role !== 'owner') {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized access'
+                'message' => 'Unauthorized access owner'
             ], 403);
         }
 

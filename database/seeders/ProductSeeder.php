@@ -25,7 +25,7 @@ class ProductSeeder extends Seeder
                     'name' => "Product {$i} for {$tenant->name}",
                     'sku' => strtoupper(substr($tenant->name,0,3)) . "-P{$i}", // tenant-wise unique SKU
                     'price' => rand(50, 500), // random price
-                    'stock_quantity' => rand(0, 10),
+                    'stock_quantity' => rand(1, 10),
                     'low_stock_threshold' => rand(5, 10),
                 ]);
             }

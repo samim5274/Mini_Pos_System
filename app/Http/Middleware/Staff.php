@@ -18,7 +18,7 @@ class Staff
         if (!auth()->check() || auth()->user()->role !== 'staff') {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized access'
+                'message' => 'Unauthorized access staff'
             ], 403);
         }
 
